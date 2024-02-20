@@ -1,0 +1,39 @@
+def extrair_endereco(endereco):
+  partes = endereco.split()  # Divide a string de endereço em partes separadas por espaço
+  extra = None
+
+  # Verifica se o primeiro elemento é um número ( como "4, Rue de la République")
+  if partes[0].isdigit():
+      numero = partes[0]
+      nome = ' '.join(partes[1:])
+  else:
+      # Verifica se o último elemento contém um número ( como "Calle Sagasta, 26")
+      if partes[-1].isdigit():
+          numero = partes[-1]
+          nome = ' '.join(partes[:-1])
+      else:
+          # Procura pelo primeiro elemento que contenha um número (como "100 Broadway Av")
+          for i, parte in enumerate(partes):
+              if any(char.isdigit() for char in parte):
+                  numero = parte
+                  nome = ' '.join(partes[:i] + partes[i+1:])
+                  extra = ' '.join(partes[i+1:])
+                  break
+          else:
+              # Se não encontrar um número, assume que o número da rua está ausente
+              numero = ""
+              nome = ' '.join(partes)
+
+  return nome, numero, extra
+
+# Solicita ao usuário inserir o endereço
+endereco = input("Insira o endereço: ")
+
+# Extrai o nome da rua, o número da rua e a informação adicional
+nome, numero, extra = extrair_endereco(endereco)
+
+# Exibe o resultado
+if extra:  # Se houver informação extra
+  print(f'"{nome.strip()}", "{numero} {extra}"')
+else:  # Se não houver informação extra
+  print(f'"{nome.strip()}", "{numero}"')
