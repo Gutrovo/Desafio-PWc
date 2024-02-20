@@ -1,14 +1,19 @@
+import re
+
 def extrair_endereco(endereco):
-  partes = endereco.rsplit(' ', 2)  # Divide a string de endereço em até 3 partes
-  if len(partes) == 3:              # Se houver 3 partes, isso significa que há informação extra
-      nome = partes[0]              #  nome da rua
-      numero = partes[1]            #  número da rua
-      extra = partes[2]             #  informação extra
-  else:                             # Caso não tenha informação extra
-      nome = partes[0]              # nome da rua
-      extra = None                  # Define a informação extra como None
-      numero = partes[1]            # número da rua
-  return nome, numero, extra
+    # Expressão regular para separar o nome da rua, número da rua e informação extra
+    match = re.match(r'(.+?)\s+(\d+)\s*(.*)$', endereco)
+
+    if match:
+        nome = match.group(1)  # Captura o nome da rua
+        numero = match.group(2)  # Captura o número da rua
+        extra = match.group(3).strip()  # Captura a informação extra, se houver
+    else:
+        nome = endereco  # Define o endereço completo como nome da rua
+        numero = None  # Define o número da rua como None
+        extra = None  # Define a informação extra como None
+
+    return nome, numero, extra
 
 # Solicita ao usuário inserir o endereço
 endereco = input("Insira o endereço: ")
@@ -17,7 +22,10 @@ endereco = input("Insira o endereço: ")
 nome, numero, extra = extrair_endereco(endereco)
 
 # Exibe o resultado
-if extra is not None:  # Se houver informação extra
-  print(f'"{nome}", "{numero} {extra}"')
-else:  # Se não houver informação extra
-  print(f'"{nome}", "{numero}"')
+if numero is not None:  # Se houver número da rua
+    if extra:  # Se houver informação extra
+        print(f'"{nome.strip()}", "{numero} {extra}"')
+    else:  # Se não houver informação extra
+        print(f'"{nome.strip()}", "{numero}"')
+else:  # Se não houver número da rua
+    print(f'"{nome.strip()}", "N/A"')
